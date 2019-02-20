@@ -34,7 +34,7 @@ enum Error {
     InvalidFlags,
     BadUserame,
     NoReadersAvailable,
-    NoSmartcaard,
+    NoSmartcard,
     BadSmartcardPin,
     EntryNotFound, /**< For the given key no data was found */
     CouldNotDeleteEntry, /**< Could not delete existing secret data */
