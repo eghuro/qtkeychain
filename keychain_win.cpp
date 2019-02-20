@@ -27,9 +27,38 @@ void ReadPasswordJobPrivate::scheduledStart() {
         Error error;
         QString msg;
         switch(GetLastError()) {
+        case ERROR_NO_SUCH_LOGON_SESSION:
+            error = NoSuchLogonSession;
+            msg = tr("No such logon session");
+            break;
+        case ERROR_INVALID_PARAMETER:
+            error = InvalidParameter;
+            msg = tr("Invalid parameter");
+            break;
+        case ERROR_INVALID_FLAGS:
+            error = InvalidFlags;
+            msg = tr("Invalid flags");
+            break;
+        case ERROR_BAD_USERNAME:
+            error = BadUserame;
+            msg = tr("Bad username");
+            break;
         case ERROR_NOT_FOUND:
             error = EntryNotFound;
             msg = tr("Password entry not found");
+            break;
+        case SCARD_E_NO_READERS_AVAILABLE:
+            error = NoReadersAvailable;
+            msg = tr("Smart card reader is not available");
+            break;
+        case SCARD_E_NO_SMARTCARD:
+        case SCARD_W_REMOVED_CARD:
+            error = NoSmartcard;
+            msg = tr("Smart card not present");
+            break;
+        case SCARD_W_WRONG_CHV:
+            error = BadSmartcardPin;
+            msg = tr("Bad pin");
             break;
         default:
             error = OtherError;
@@ -99,9 +128,38 @@ void DeletePasswordJobPrivate::scheduledStart() {
         Error error;
         QString msg;
         switch(GetLastError()) {
+        case ERROR_NO_SUCH_LOGON_SESSION:
+            error = NoSuchLogonSession;
+            msg = tr("No such logon session");
+            break;
+        case ERROR_INVALID_PARAMETER:
+            error = InvalidParameter;
+            msg = tr("Invalid parameter");
+            break;
+        case ERROR_INVALID_FLAGS:
+            error = InvalidFlags;
+            msg = tr("Invalid flags");
+            break;
+        case ERROR_BAD_USERNAME:
+            error = BadUserame;
+            msg = tr("Bad username");
+            break;
         case ERROR_NOT_FOUND:
             error = EntryNotFound;
             msg = tr("Password entry not found");
+            break;
+        case SCARD_E_NO_READERS_AVAILABLE:
+            error = NoReadersAvailable;
+            msg = tr("Smart card reader is not available");
+            break;
+        case SCARD_E_NO_SMARTCARD:
+        case SCARD_W_REMOVED_CARD:
+            error = NoSmartcard;
+            msg = tr("Smart card not present");
+            break;
+        case SCARD_W_WRONG_CHV:
+            error = BadSmartcardPin;
+            msg = tr("Bad pin");
             break;
         default:
             error = OtherError;

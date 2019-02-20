@@ -29,6 +29,13 @@ namespace QKeychain {
  */
 enum Error {
     NoError=0, /**< No error occurred, operation was successful */
+    NoSuchLogonSession,
+    InvalidParameter,
+    InvalidFlags,
+    BadUserame,
+    NoReadersAvailable,
+    NoSmartcaard,
+    BadSmartcardPin,
     EntryNotFound, /**< For the given key no data was found */
     CouldNotDeleteEntry, /**< Could not delete existing secret data */
     AccessDeniedByUser, /**< User denied access to keychain */
