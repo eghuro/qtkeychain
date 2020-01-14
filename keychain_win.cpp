@@ -74,7 +74,8 @@ void ReadPasswordJobPrivate::scheduledStart() {
 
     for (DWORD i=0; i < cred->AttributeCount; i++) {
         const CREDENTIAL_ATTRIBUTEW &cred_attr = cred->Attributes[i];
-        data.second[QString::fromWCharArray(cred_attr.Keyword)] = QByteArray((char *) cred_attr.Value, cred_attr.ValueSize);
+        const QString attr_name{ QString::fromUtf16((const ushort *)cred_attr.Keyword) };
+        data.second[attr_name] = QByteArray((char *) cred_attr.Value, cred_attr.ValueSize);
     }
 
     CredFree(cred);
@@ -103,7 +104,7 @@ void WritePasswordJobPrivate::scheduledStart() {
         DWORD i = 0;
         while (iter.hasNext()) {
             iter.next();
-            cred.Attributes[i].Keyword = const_cast<wchar_t*>(iter.key().toStdWString().c_str());
+            cred.Attributes[i].Keyword = (LPWSTR) iter.key().utf16();
             cred.Attributes[i].ValueSize = iter.value().length();
             cred.Attributes[i].Value = (LPBYTE) iter.value().data();
             i++;
