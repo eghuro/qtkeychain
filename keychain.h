@@ -10,19 +10,29 @@
 #define KEYCHAIN_H
 
 #if !defined(QTKEYCHAIN_NO_EXPORT)
-#include "qkeychain_export.h"
+#include "../qkeychain_export.h"
 #else
 #define QKEYCHAIN_EXPORT
 #endif
 
 #include <QtCore/QObject>
 #include <QtCore/QString>
+#include <QtCore/QPair>
+#include <QtCore/QHash>
 
 class QSettings;
 
 #define QTKEYCHAIN_VERSION 0x000100
 
 namespace QKeychain {
+
+/**
+ * Types for passing attributes together with the key value (only supported in Windows Credential Manager).
+ * On macOS Attributes is empty.
+ */
+typedef QHash<QString, QByteArray> Attributes;
+typedef QHashIterator<QString, QByteArray> AttributesIterator;
+typedef QPair<QByteArray, Attributes> KeychainItem;
 
 /**
  * Error codes
@@ -207,7 +217,15 @@ public:
      * @warning Returns meaningless data if the data was stored as binary data.
      * @see WritePasswordJob::setTextData()
      */
+
     QString textData() const;
+    /**
+     * @return The string stored as value + attributes of this job's key().
+     * @see Job::key()
+     * @warning Returns meaningless data if the data was stored as binary data.
+     * @see WritePasswordJob::setTextData()
+     */
+    KeychainItem data() const;
 
 private:
     friend class QKeychain::ReadPasswordJobPrivate;
@@ -244,6 +262,13 @@ public:
      * @warning setBinaryData() and setTextData() are mutually exclusive.
      */
     void setTextData( const QString& data );
+
+    /**
+     * Set the @p data that the job will store in the keychain as string.
+     * Typically @p data is a password + attributes.
+     * @warning setBinaryData() and setData() are mutually exclusive.
+     */
+    void setData( const KeychainItem &data );
 
 private:
 

@@ -47,7 +47,7 @@ public:
 
     Job* const q;
     Mode mode;
-    QByteArray data;
+    KeychainItem data;
 
 #if defined(Q_OS_UNIX) && !defined(Q_OS_DARWIN) && !defined(Q_OS_ANDROID)
     org::kde::KWallet* iface;
