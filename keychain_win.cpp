@@ -111,7 +111,7 @@ void WritePasswordJobPrivate::scheduledStart() {
     cred.TargetName = name;
     cred.CredentialBlobSize = data.first.size();
     cred.CredentialBlob = (LPBYTE)pwd;
-    cred.Persist = CRED_PERSIST_ENTERPRISE;
+    cred.Persist = CRED_PERSIST_LOCAL_MACHINE;
 
     if (attrs.size() > 0) {
         cred.AttributeCount = attrs.size();
