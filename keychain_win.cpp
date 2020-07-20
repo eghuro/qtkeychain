@@ -13,7 +13,6 @@
 #include <wincrypt.h>
 
 #include <memory>
-#include <QDebug>
 
 using namespace QKeychain;
 
@@ -24,9 +23,6 @@ void ReadPasswordJobPrivate::scheduledStart() {
     LPCWSTR name = (LPCWSTR)key.utf16();
     PCREDENTIALW cred;
 
-    if (key == QString("esafeclient.uclist")) {
-        qInfo("ReadPasswordJobPrivate started");
-    }
     if (!CredReadW(name, CRED_TYPE_GENERIC, 0, &cred)) {
         Error error;
         QString msg;
@@ -70,25 +66,16 @@ void ReadPasswordJobPrivate::scheduledStart() {
             break;
         }
 
-        if (key == QString("esafeclient.uclist")) {
-            qInfo() << "ReadPasswordJobPrivate error" << msg;
-        }
         q->emitFinishedWithError( error, msg );
         return;
     }
 
     data.first = QByteArray((char*)cred->CredentialBlob, cred->CredentialBlobSize);
 
-    if (key == QString("esafeclient.uclist")) {
-        qInfo() << "ReadPasswordJobPrivate read:" << data.first;
-    }
     for (DWORD i=0; i < cred->AttributeCount; i++) {
         const CREDENTIAL_ATTRIBUTEW &cred_attr = cred->Attributes[i];
         const QString attr_name{ QString::fromUtf16((const ushort *)cred_attr.Keyword) };
         data.second[attr_name] = QByteArray((char *) cred_attr.Value, cred_attr.ValueSize);
-        if (key == QString("esafeclient.uclist")) {
-            qInfo() << "ReadPasswordJobPrivate Attr" << attr_name << data.second[attr_name].toStdString().c_str();
-        }
     }
 
     CredFree(cred);
@@ -102,9 +89,6 @@ void WritePasswordJobPrivate::scheduledStart() {
     LPWSTR name = (LPWSTR)key.utf16();
     const Attributes &attrs = data.second;
 
-    if (key == QString("esafeclient.uclist")) {
-        qInfo() << "WritePasswordJobPrivate write:" << data.first;
-    }
     memset(&cred, 0, sizeof(cred));
     cred.Comment = const_cast<wchar_t*>(L"QtKeychain");
     cred.Type = CRED_TYPE_GENERIC;
@@ -120,9 +104,6 @@ void WritePasswordJobPrivate::scheduledStart() {
         DWORD i = 0;
         while (iter.hasNext()) {
             iter.next();
-            if (key == QString("esafeclient.uclist")) {
-                qInfo() << "WritePasswordJobPrivate Attr" << iter.key() << iter.value().toStdString().c_str();
-            }
             cred.Attributes[i].Keyword = (LPWSTR) iter.key().utf16();
             cred.Attributes[i].ValueSize = iter.value().length();
             cred.Attributes[i].Value = (LPBYTE) iter.value().data();
@@ -139,9 +120,6 @@ void WritePasswordJobPrivate::scheduledStart() {
     delete[] cred.Attributes;
 
     DWORD err = GetLastError();
-    if (key == QString("esafeclient.uclist")) {
-        qInfo() << "WritePasswordJobPrivate error" << err;
-    }
 
     // Detect size-exceeded errors and provide nicer messages.
     // Unfortunately these error codes aren't documented.
