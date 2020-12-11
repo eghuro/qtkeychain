@@ -113,6 +113,7 @@ private Q_SLOTS:
 class ReadPasswordJobPrivateCustom : public ReadPasswordJobPrivate {
 public:
     explicit ReadPasswordJobPrivateCustom( const QString &service_, ReadPasswordJob* qq ) : ReadPasswordJobPrivate(service_, qq) {}
+    void scheduledStart();
 };
 
 class WritePasswordJobPrivate : public JobPrivate {
@@ -131,6 +132,7 @@ public:
 class WritePasswordJobPrivateCustom : public WritePasswordJobPrivate {
 public:
     explicit WritePasswordJobPrivateCustom( const QString &service_, WritePasswordJob* qq ) : WritePasswordJobPrivate( service_, qq ) { }
+    void scheduledStart();
 };
 
 class DeletePasswordJobPrivate : public JobPrivate {
@@ -154,6 +156,7 @@ class DeletePasswordJobPrivateCustom : public DeletePasswordJobPrivate {
 public:
     explicit DeletePasswordJobPrivateCustom( const QString &service_, DeletePasswordJob* qq ) :
         DeletePasswordJobPrivate( service_,  qq ) {}
+    void scheduledStart();
 
 };
 
