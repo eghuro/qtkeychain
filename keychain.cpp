@@ -97,11 +97,15 @@ ReadPasswordJob::~ReadPasswordJob() {
 }
 
 QString ReadPasswordJob::textData() const {
-    return QString::fromUtf8( d->data );
+    return QString::fromUtf8( d->data.first );
+}
+
+KeychainItem ReadPasswordJob::data() const {
+    return d->data;
 }
 
 QByteArray ReadPasswordJob::binaryData() const {
-    return d->data;
+    return d->data.first;
 }
 
 QString Job::key() const {
@@ -120,12 +124,19 @@ WritePasswordJob::~WritePasswordJob() {
 }
 
 void WritePasswordJob::setBinaryData( const QByteArray& data ) {
-    d->data = data;
+    d->data.first = data;
+    d->data.second.clear();
     d->mode = JobPrivate::Binary;
 }
 
 void WritePasswordJob::setTextData( const QString& data ) {
-    d->data = data.toUtf8();
+    d->data.first = data.toUtf8();
+    d->data.second.clear();
+    d->mode = JobPrivate::Text;
+}
+
+void WritePasswordJob::setData( const KeychainItem &data ) {
+    d->data = data;
     d->mode = JobPrivate::Text;
 }
 

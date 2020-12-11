@@ -66,7 +66,7 @@ void ReadPasswordJobPrivate::scheduledStart()
 {
     QString errorString;
     Error error = NoError;
-    const OSStatus ret = readPw( &data, q->service(), q->key(), 0 );
+    const OSStatus ret = readPw( &data.first, q->service(), q->key(), 0 );
 
     switch ( ret ) {
     case noErr:
@@ -147,7 +147,7 @@ void WritePasswordJobPrivate::scheduledStart()
     QString errorString;
     Error error = NoError;
 
-    error = writeEntryImpl( q->service(), key, data, &errorString );
+    error = writeEntryImpl( q->service(), key, data.first, &errorString );
     q->emitFinishedWithError( error, errorString );
 }
 

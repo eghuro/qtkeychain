@@ -70,7 +70,14 @@ void ReadPasswordJobPrivate::scheduledStart() {
         return;
     }
 
-    data = QByteArray((char*)cred->CredentialBlob, cred->CredentialBlobSize);
+    data.first = QByteArray((char*)cred->CredentialBlob, cred->CredentialBlobSize);
+
+    for (DWORD i=0; i < cred->AttributeCount; i++) {
+        const CREDENTIAL_ATTRIBUTEW &cred_attr = cred->Attributes[i];
+        const QString attr_name{ QString::fromUtf16((const ushort *)cred_attr.Keyword) };
+        data.second[attr_name] = QByteArray((char *) cred_attr.Value, cred_attr.ValueSize);
+    }
+
     CredFree(cred);
 
     q->emitFinished();
@@ -78,21 +85,39 @@ void ReadPasswordJobPrivate::scheduledStart() {
 
 void WritePasswordJobPrivate::scheduledStart() {
     CREDENTIALW cred;
-    char *pwd = data.data();
+    char *pwd = data.first.data();
     LPWSTR name = (LPWSTR)key.utf16();
+    const Attributes &attrs = data.second;
 
     memset(&cred, 0, sizeof(cred));
     cred.Comment = const_cast<wchar_t*>(L"QtKeychain");
     cred.Type = CRED_TYPE_GENERIC;
     cred.TargetName = name;
-    cred.CredentialBlobSize = data.size();
+    cred.CredentialBlobSize = data.first.size();
     cred.CredentialBlob = (LPBYTE)pwd;
-    cred.Persist = CRED_PERSIST_ENTERPRISE;
+    cred.Persist = CRED_PERSIST_LOCAL_MACHINE;
+
+    if (attrs.size() > 0) {
+        cred.AttributeCount = attrs.size();
+        cred.Attributes = new CREDENTIAL_ATTRIBUTEW[cred.AttributeCount];
+        QKeychain::AttributesIterator iter(attrs);
+        DWORD i = 0;
+        while (iter.hasNext()) {
+            iter.next();
+            cred.Attributes[i].Keyword = (LPWSTR) iter.key().utf16();
+            cred.Attributes[i].ValueSize = iter.value().length();
+            cred.Attributes[i].Value = (LPBYTE) iter.value().data();
+            i++;
+        }
+    }
 
     if (CredWriteW(&cred, 0)) {
         q->emitFinished();
+        delete[] cred.Attributes;
         return;
     }
+
+    delete[] cred.Attributes;
 
     DWORD err = GetLastError();
 
