@@ -223,7 +223,7 @@ void ReadPasswordJobPrivateCustom::scheduledStart() {
         return;
     }
 
-    data = QByteArray( reinterpret_cast<char*>( blob_out.pbData ), blob_out.cbData );
+    data.first = QByteArray( reinterpret_cast<char*>( blob_out.pbData ), blob_out.cbData );
     SecureZeroMemory( blob_out.pbData, blob_out.cbData );
     LocalFree( blob_out.pbData );
 
@@ -232,8 +232,8 @@ void ReadPasswordJobPrivateCustom::scheduledStart() {
 
 void WritePasswordJobPrivateCustom::scheduledStart() {
     DATA_BLOB blob_in, blob_out;
-    blob_in.pbData = reinterpret_cast<BYTE*>( data.data() );
-    blob_in.cbData = data.size();
+    blob_in.pbData = reinterpret_cast<BYTE*>( data.first.data() );
+    blob_in.cbData = data.first.size();
     const BOOL res = CryptProtectData( &blob_in,
                                        L"QKeychain-encrypted data",
                                        NULL,
