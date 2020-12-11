@@ -16,7 +16,6 @@
 
 using namespace QKeychain;
 
-#if defined(USE_CREDENTIAL_STORE)
 #include <wincred.h>
 
 void ReadPasswordJobPrivate::scheduledStart() {
@@ -197,8 +196,9 @@ void DeletePasswordJobPrivate::scheduledStart() {
         q->emitFinished();
     }
 }
-#else
-void ReadPasswordJobPrivate::scheduledStart() {
+
+
+void ReadPasswordJobPrivateCustom::scheduledStart() {
     PlainTextStore plainTextStore( q->service(), q->settings() );
     QByteArray encrypted = plainTextStore.readData( key );
     if ( plainTextStore.error() != NoError ) {
@@ -230,7 +230,7 @@ void ReadPasswordJobPrivate::scheduledStart() {
     q->emitFinished();
 }
 
-void WritePasswordJobPrivate::scheduledStart() {
+void WritePasswordJobPrivateCustom::scheduledStart() {
     DATA_BLOB blob_in, blob_out;
     blob_in.pbData = reinterpret_cast<BYTE*>( data.data() );
     blob_in.cbData = data.size();
@@ -259,7 +259,7 @@ void WritePasswordJobPrivate::scheduledStart() {
     q->emitFinished();
 }
 
-void DeletePasswordJobPrivate::scheduledStart() {
+void DeletePasswordJobPrivateCustom::scheduledStart() {
     PlainTextStore plainTextStore( q->service(), q->settings() );
     plainTextStore.remove( key );
     if ( plainTextStore.error() != NoError ) {
@@ -268,4 +268,3 @@ void DeletePasswordJobPrivate::scheduledStart() {
         q->emitFinished();
     }
 }
-#endif

@@ -88,8 +88,9 @@ void Job::setErrorString( const QString& errorString ) {
     d->errorString = errorString;
 }
 
-ReadPasswordJob::ReadPasswordJob( const QString& service, QObject* parent )
+ReadPasswordJob::ReadPasswordJob( const QString& service, bool customKeychain, QObject* parent )
     : Job( new ReadPasswordJobPrivate( service, this ), parent ) {
+    if (customKeychain) setPrivate( new ReadPasswordJobPrivateCustom( service, this ));
 
 }
 
@@ -116,8 +117,9 @@ void Job::setKey( const QString& key_ ) {
     d->key = key_;
 }
 
-WritePasswordJob::WritePasswordJob( const QString& service, QObject* parent )
-    : Job( new WritePasswordJobPrivate( service, this ), parent ) {
+WritePasswordJob::WritePasswordJob(const QString& service, bool customKeychain, QObject* parent ) : Job( new WritePasswordJobPrivate( service, this ), parent )
+{
+    if (customKeychain) setPrivate( new WritePasswordJobPrivateCustom( service, this ));
 }
 
 WritePasswordJob::~WritePasswordJob() {
@@ -140,8 +142,9 @@ void WritePasswordJob::setData( const KeychainItem &data ) {
     d->mode = JobPrivate::Text;
 }
 
-DeletePasswordJob::DeletePasswordJob( const QString& service, QObject* parent )
+DeletePasswordJob::DeletePasswordJob( const QString& service, bool customKeychain, QObject* parent )
     : Job( new DeletePasswordJobPrivate( service, this ), parent ) {
+    if (customKeychain) setPrivate( new DeletePasswordJobPrivateCustom( service, this ));
 }
 
 DeletePasswordJob::~DeletePasswordJob() {

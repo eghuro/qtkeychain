@@ -53,23 +53,19 @@ unix:!macx:!ios {
 }
 
 win32 {
-    # Remove the following USE_CREDENTIAL_STORE line
-    # to use the CryptProtectData Windows API function
-    # instead of the Windows Credential Store.
-    DEFINES += USE_CREDENTIAL_STORE
-    contains(DEFINES, USE_CREDENTIAL_STORE) {
-        !build_pass:message("Windows Credential Store support: on")
-        LIBS += -lAdvapi32
-    } else {
-        !build_pass:message("Windows Credential Store support: off")
-        LIBS += -lCrypt32
-        HEADERS += $$QT5KEYCHAIN_PWD/plaintextstore_p.h
-        SOURCES += $$QT5KEYCHAIN_PWD/plaintextstore.cpp
-    }
-    HEADERS += $$QT5KEYCHAIN_PWD/libsecret_p.h
+    # WE CHOOSE CREDENTIAL STORE / PLAINTEXT STORE ON RUNTIME
+    LIBS += \
+        -lAdvapi32 \
+        -lCrypt32
+
+    HEADERS += \
+        $$QT5KEYCHAIN_PWD/libsecret_p.h \
+        $$QT5KEYCHAIN_PWD/plaintextstore_p.h
+
     SOURCES += \
         $$QT5KEYCHAIN_PWD/keychain_win.cpp \
-        $$QT5KEYCHAIN_PWD/libsecret.cpp
+        $$QT5KEYCHAIN_PWD/libsecret.cpp \
+        $$QT5KEYCHAIN_PWD/plaintextstore.cpp
 }
 
 macx:!ios {

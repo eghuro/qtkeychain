@@ -110,6 +110,11 @@ private Q_SLOTS:
     friend class ReadPasswordJob;
 };
 
+class ReadPasswordJobPrivateCustom : public ReadPasswordJobPrivate {
+public:
+    explicit ReadPasswordJobPrivateCustom( const QString &service_, ReadPasswordJob* qq ) : ReadPasswordJobPrivate(service_, qq) {}
+};
+
 class WritePasswordJobPrivate : public JobPrivate {
     Q_OBJECT
 public:
@@ -121,6 +126,11 @@ public:
 #endif
 
     friend class WritePasswordJob;
+};
+
+class WritePasswordJobPrivateCustom : public WritePasswordJobPrivate {
+public:
+    explicit WritePasswordJobPrivateCustom( const QString &service_, WritePasswordJob* qq ) : WritePasswordJobPrivate( service_, qq ) { }
 };
 
 class DeletePasswordJobPrivate : public JobPrivate {
@@ -138,6 +148,13 @@ protected:
     void doStart();
 
     friend class DeletePasswordJob;
+};
+
+class DeletePasswordJobPrivateCustom : public DeletePasswordJobPrivate {
+public:
+    explicit DeletePasswordJobPrivateCustom( const QString &service_, DeletePasswordJob* qq ) :
+        DeletePasswordJobPrivate( service_,  qq ) {}
+
 };
 
 class JobExecutor : public QObject {
